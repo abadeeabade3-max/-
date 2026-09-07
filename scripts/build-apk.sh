@@ -231,10 +231,13 @@ apksigner verify --verbose "$OUTPUT_APK"
 
 # Copy to destinations
 cp "$OUTPUT_APK" "$OUTPUT_APK_ROOT"
-mkdir -p /app/applet/dist
+cp "$OUTPUT_APK" "$REPO_ROOT/app-debug.apk"
+cp "$OUTPUT_APK" "$REPO_ROOT/public/app-debug.apk"
+mkdir -p "$REPO_ROOT/dist"
 cp "$OUTPUT_APK" "$DIST_APK"
+cp "$OUTPUT_APK" "$REPO_ROOT/dist/app-debug.apk"
 
 echo "=== SUCCESS! ==="
 echo "Debug APK successfully created:"
 ls -lh "$OUTPUT_APK"
-ls -lh "$OUTPUT_APK_ROOT"
+ls -lh "$REPO_ROOT/app-debug.apk"

@@ -132,7 +132,7 @@ jobs:
 `;
   workflowsFolder.file('pages.yml', pagesWorkflow);
 
-  const apkWorkflow = `name: Build Android APK
+  const apkWorkflow = `name: Build & Release Android APK
 
 on:
   push:
@@ -140,15 +140,24 @@ on:
     tags: ["v*"]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
+concurrency:
+  group: "build-apk"
+  cancel-in-progress: true
+
 jobs:
-  build:
+  build-and-release:
+    name: Build Debug APK and Create Release
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout repository
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3
+      - name: Set up Java JDK 17
+        uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
@@ -156,29 +165,68 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Setup Node.js
+      - name: Install Android Build Tools and Platform
+        run: |
+          yes | sdkmanager --licenses || true
+          sdkmanager "build-tools;34.0.0" "platforms;android-34"
+
+      - name: Export Build Tools to PATH
+        run: |
+          BUILD_TOOLS_DIR=$(find $ANDROID_HOME/build-tools -maxdepth 1 -mindepth 1 | sort -V | tail -n 1)
+          echo "$BUILD_TOOLS_DIR" >> $GITHUB_PATH
+
+      - name: Set up Node.js 20
         uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: 'npm'
 
       - name: Install Dependencies
-        run: npm install
+        run: npm ci || npm install
 
       - name: Build Web Assets
         run: npm run build
 
-      - name: Compile Standalone APK
+      - name: Compile and Sign Android Debug APK
         run: |
-          chmod +x scripts/build-apk.sh || true
-          bash scripts/build-apk.sh || echo "Build process finished"
+          chmod +x scripts/build-apk.sh
+          bash scripts/build-apk.sh
+          if [ ! -f "app-debug.apk" ]; then
+            if [ -f "powergym-debug.apk" ]; then
+              cp powergym-debug.apk app-debug.apk
+            elif [ -f "public/powergym-debug.apk" ]; then
+              cp public/powergym-debug.apk app-debug.apk
+            fi
+          fi
+          ls -lh app-debug.apk
 
-      - name: Upload APK Release Artifact
+      - name: Upload APK as Workflow Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: PowerGym-Android-APK
-          path: |
-            public/*.apk
-            *.apk
+          name: app-debug
+          path: app-debug.apk
+          if-no-files-found: error
+
+      - name: Create or Update GitHub Release with Direct APK
+        uses: softprops/action-gh-release@v2
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/')
+        with:
+          tag_name: latest
+          name: "Power Gym Android Release (Latest)"
+          body: |
+            ### 🏋️ تطبيق باور جيم للأندرويد | Power Gym Android App
+            
+            - **اسم الملف:** \`app-debug.apk\`
+            - **تاريخ البناء:** \${{ github.event.head_commit.timestamp || 'Latest Build' }}
+            - **الالتزام (Commit):** \`\${{ github.sha }}\`
+            
+            📥 **رابط التحميل المباشر الدائم:**
+            [تحميل app-debug.apk](https://github.com/\${{ github.repository }}/releases/latest/download/app-debug.apk)
+          files: app-debug.apk
+          prerelease: false
+          make_latest: true
+        env:
+          GITHUB_TOKEN: \${{ secrets.GITHUB_TOKEN }}
 `;
   workflowsFolder.file('build-apk.yml', apkWorkflow);
 
