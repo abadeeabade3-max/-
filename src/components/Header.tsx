@@ -13,6 +13,7 @@ interface HeaderProps {
   onOpenCoachModal: () => void;
   onOpenManagementModal: () => void;
   onOpenInstallModal?: () => void;
+  onOpenShareModal?: () => void;
   onOpenBankPayment: () => void;
   onOpenExerciseModal: (exercise: ExerciseItem) => void;
 }
@@ -24,6 +25,7 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenCoachModal,
   onOpenManagementModal,
   onOpenInstallModal,
+  onOpenShareModal,
   onOpenBankPayment,
   onOpenExerciseModal
 }) => {
@@ -48,6 +50,18 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
 
           <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+            {/* Share with Friends Button */}
+            {onOpenShareModal && (
+              <button
+                onClick={onOpenShareModal}
+                className="flex items-center gap-1 text-xs bg-emerald-500 hover:bg-emerald-400 text-neutral-950 font-black px-2.5 py-0.5 rounded transition cursor-pointer shadow-sm"
+                title="مشاركة رابط التطبيق المباشر للأصدقاء بدون Google AI Studio"
+              >
+                <Share2 className="w-3.5 h-3.5" />
+                <span>مشاركة للأصدقاء 📲</span>
+              </button>
+            )}
+
             {/* Free Descent Exercise Selection Button */}
             <button
               onClick={() => {
@@ -174,15 +188,29 @@ export const Header: React.FC<HeaderProps> = ({
               <span className="md:hidden">الإدارة 🏢</span>
             </button>
 
-            {/* Install / APK button */}
+            {/* Share for Friends button */}
+            {onOpenShareModal && (
+              <button
+                onClick={onOpenShareModal}
+                className="flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-neutral-950 text-xs font-black transition cursor-pointer shadow-md shadow-amber-500/15"
+                title="مشاركة التطبيق مع الأصدقاء برابط مباشر"
+              >
+                <Share2 className="w-4 h-4 shrink-0" />
+                <span className="hidden sm:inline">مشاركة للأصدقاء</span>
+                <span className="sm:hidden">مشاركة</span>
+              </button>
+            )}
+
+            {/* Install / APK & GitHub button */}
             {onOpenInstallModal && (
               <button
                 onClick={onOpenInstallModal}
                 className="hidden sm:flex items-center gap-1.5 px-2.5 py-2 rounded-xl bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 text-neutral-200 text-xs font-bold transition cursor-pointer"
-                title="تثبيت التطبيق أو تحميل APK"
+                title="تثبيت التطبيق، حزمة GitHub، أو تحميل APK"
               >
                 <Smartphone className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span className="hidden xl:inline">APK</span>
+                <span className="hidden xl:inline">تثبيت / APK</span>
+                <span className="xl:hidden">APK</span>
               </button>
             )}
           </div>

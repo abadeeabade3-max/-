@@ -9,6 +9,7 @@ import { SubscriptionSection } from './components/SubscriptionSection';
 import { WomenFitnessGuide } from './components/WomenFitnessGuide';
 import { PowerGymLogo } from './components/PowerGymLogo';
 import { InstallAppModal } from './components/InstallAppModal';
+import { ShareAppModal } from './components/ShareAppModal';
 import { BankPaymentModal } from './components/BankPaymentModal';
 import { ManagementContactModal } from './components/ManagementContactModal';
 import { ExerciseDetailModal } from './components/ExerciseDetailModal';
@@ -33,7 +34,9 @@ import {
   Smartphone,
   Download,
   Heart,
-  Building2
+  Building2,
+  Share2,
+  FolderArchive
 } from 'lucide-react';
 
 export default function App() {
@@ -43,6 +46,7 @@ export default function App() {
   const [isCoachModalOpen, setIsCoachModalOpen] = useState<boolean>(false);
   const [isManagementModalOpen, setIsManagementModalOpen] = useState<boolean>(false);
   const [isInstallModalOpen, setIsInstallModalOpen] = useState<boolean>(false);
+  const [isShareModalOpen, setIsShareModalOpen] = useState<boolean>(false);
   const [isBankPaymentModalOpen, setIsBankPaymentModalOpen] = useState<boolean>(false);
   const [exerciseForModal, setExerciseForModal] = useState<ExerciseItem | null>(null);
   const [showBottomBanner, setShowBottomBanner] = useState<boolean>(true);
@@ -74,6 +78,7 @@ export default function App() {
         onOpenCoachModal={() => setIsCoachModalOpen(true)}
         onOpenManagementModal={() => setIsManagementModalOpen(true)}
         onOpenInstallModal={() => setIsInstallModalOpen(true)}
+        onOpenShareModal={() => setIsShareModalOpen(true)}
         onOpenBankPayment={() => setIsBankPaymentModalOpen(true)}
         onOpenExerciseModal={(ex) => setExerciseForModal(ex)}
       />
@@ -128,41 +133,59 @@ export default function App() {
               onNavigateToWorkout={() => setActiveTab('workouts')}
             />
 
-            {/* Direct APK & Easy Install Helper Banner */}
+            {/* Direct APK, GitHub ZIP & Easy Install Helper Banner */}
             <div 
               onClick={() => setIsInstallModalOpen(true)}
-              className="p-4 rounded-2xl bg-gradient-to-r from-emerald-950/60 via-neutral-900 to-amber-950/40 border border-emerald-500/40 hover:border-emerald-500 transition cursor-pointer flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3.5 shadow-xl shadow-emerald-500/5 group"
+              className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-purple-950/50 via-neutral-900 to-emerald-950/40 border border-purple-500/40 hover:border-purple-400 transition cursor-pointer flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-xl shadow-purple-500/5 group"
             >
-              <div className="flex items-center gap-3.5">
-                <div className="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0 group-hover:scale-105 transition">
-                  <Smartphone className="w-6 h-6" />
+              <div className="flex items-start sm:items-center gap-3.5">
+                <div className="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 shrink-0 group-hover:scale-105 transition">
+                  <FolderArchive className="w-6 h-6" />
                 </div>
                 <div>
                   <div className="flex flex-wrap items-center gap-2">
-                    <h4 className="text-sm sm:text-base font-black text-white group-hover:text-emerald-400 transition">
-                      تثبيت باور جيم • كود AppsGeyser وملف APK 📱
+                    <h4 className="text-sm sm:text-base font-black text-white group-hover:text-purple-300 transition">
+                      حزمة GitHub وملف الـ ZIP الشامل • مع ملف APK مباشر 🐙📦
                     </h4>
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                      دعم جميع إصدارات الهواتف ⚡
+                    </span>
                     <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                      كود ملف واحد لـ AppsGeyser 🚀
+                      مشاركة مباشرة للأصدقاء 📲
                     </span>
                   </div>
-                  <p className="text-xs text-neutral-400 mt-1">
-                    احصل على كود التطبيق المدمج كاملاً في ملف واحد لرفعه على AppsGeyser أو نسخه بنقرة زر، مع روابط APK جاهزة وحلول مشاكل التثبيت.
+                  <p className="text-xs text-neutral-300 mt-1 leading-relaxed">
+                    حزمة ZIP جاهزة لمستودع GitHub مع نشر فوري على GitHub Pages، وبناء APK تلقائياً عبر GitHub Actions يعمل على كافة هواتف أندرويد وآيفون، بالإضافة إلى دليل خطوة بخطوة لتجاوز حظر أمان أندرويد (Play Protect).
                   </p>
                 </div>
               </div>
 
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setIsInstallModalOpen(true);
-                }}
-                className="w-full sm:w-auto py-2.5 px-4 rounded-xl bg-amber-500 hover:bg-amber-400 text-neutral-950 text-xs font-black shrink-0 transition flex items-center justify-center gap-1.5 shadow-md shadow-amber-500/20 cursor-pointer"
-              >
-                <Download className="w-4 h-4" />
-                <span>كود AppsGeyser / تثبيت</span>
-              </button>
+              <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto shrink-0">
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsInstallModalOpen(true);
+                  }}
+                  className="flex-1 sm:flex-initial py-2.5 px-4 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-black transition flex items-center justify-center gap-1.5 shadow-md shadow-purple-600/20 cursor-pointer"
+                >
+                  <Download className="w-4 h-4" />
+                  <span>تثبيت وتحميل الحزمة (ZIP & APK) 📦</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsShareModalOpen(true);
+                  }}
+                  className="py-2.5 px-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-neutral-950 text-xs font-black transition flex items-center justify-center gap-1.5 shadow-md shadow-amber-500/15 cursor-pointer"
+                  title="مشاركة رابط التطبيق المباشر مع الأصدقاء بدون Google AI Studio"
+                >
+                  <Share2 className="w-4 h-4" />
+                  <span>مشاركة للأصدقاء 📲</span>
+                </button>
+              </div>
             </div>
 
             {/* Quick Action Bento Grid */}
@@ -580,6 +603,14 @@ export default function App() {
       <InstallAppModal
         isOpen={isInstallModalOpen}
         onClose={() => setIsInstallModalOpen(false)}
+        onOpenShareModal={() => setIsShareModalOpen(true)}
+      />
+
+      {/* Share App Modal for Friends */}
+      <ShareAppModal
+        isOpen={isShareModalOpen}
+        onClose={() => setIsShareModalOpen(false)}
+        onOpenInstallModal={() => setIsInstallModalOpen(true)}
       />
     </div>
   );
