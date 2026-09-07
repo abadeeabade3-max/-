@@ -1,5 +1,5 @@
 import React from 'react';
-import { Dumbbell, MapPin, Share2, Facebook, MessageCircle, Clock, ShieldCheck, Smartphone, Download, CreditCard, Building2, UserCheck, PhoneCall, Sparkles } from 'lucide-react';
+import { Dumbbell, MapPin, Share2, Facebook, MessageCircle, Clock, ShieldCheck, Smartphone, Download, CreditCard, Building2, UserCheck, PhoneCall, Sparkles, FileCode } from 'lucide-react';
 import { GYM_LOCATION_URL, GYM_FACEBOOK_URL, COACH_FACEBOOK_URL, COACH_NAME, BANK_DETAILS, GYM_NAME } from '../data/gymData';
 import { CurrentStatusInfo, ExerciseItem } from '../types';
 import { PowerGymLogo } from './PowerGymLogo';
@@ -83,6 +83,17 @@ export const Header: React.FC<HeaderProps> = ({
               <Building2 className="w-3.5 h-3.5" />
               <span>شمال أفريقيا 💳</span>
             </button>
+
+            {/* Single File HTML Quick Download Link */}
+            <a
+              href="/powergym.html"
+              download="powergym.html"
+              className="hidden md:flex items-center gap-1 text-xs bg-black/25 hover:bg-black/40 text-neutral-950 font-black px-2 py-0.5 rounded transition cursor-pointer"
+              title="تحميل كود التطبيق كاملاً في ملف HTML واحد"
+            >
+              <FileCode className="w-3.5 h-3.5" />
+              <span>ملف HTML 📄</span>
+            </a>
 
             {/* Coach Abdulrahman */}
             <button
@@ -200,6 +211,17 @@ export const Header: React.FC<HeaderProps> = ({
                 <span className="sm:hidden">مشاركة</span>
               </button>
             )}
+
+            {/* Single File HTML Direct Download Button */}
+            <a
+              href="/powergym.html"
+              download="powergym.html"
+              className="hidden lg:flex items-center gap-1.5 px-2.5 py-2 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-300 text-xs font-bold transition cursor-pointer"
+              title="تحميل كود التطبيق كاملاً في ملف واحد HTML"
+            >
+              <FileCode className="w-4 h-4 text-amber-400 shrink-0" />
+              <span>ملف HTML 📄</span>
+            </a>
 
             {/* Install / APK & GitHub button */}
             {onOpenInstallModal && (

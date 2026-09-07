@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>باور جيم | Power Gym</title>
+  <meta name="description" content="تطبيق باور جيم الرياضي - جداول تمارين، خطط تضخيم وتنشيف، حاسبة السعرات، وتمرين النزول الحر">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Cairo', 'sans-serif'] },
+          colors: {
+            gold: { 400: '#fbbf24', 500: '#f59e0b', 600: '#d97706' },
+            gym: { 950: '#0a0a0a', 900: '#121212', 850: '#1a1a1a', 800: '#222222', 700: '#2d2d2d' }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: 'Cairo', sans-serif; background-color: #0a0a0a; color: #f5f5f5; -webkit-tap-highlight-color: transparent; }
+    .gold-gradient { background: linear-gradient(135deg, #fbbf24, #d97706); }
+    .gold-border { border-color: rgba(245, 158, 11, 0.35); }
+    .badge-gold { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #0a0a0a; }
+    ::-webkit-scrollbar-thumb { background: #262626; border-radius: 3px; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-gym-950 text-neutral-100 antialiased selection:bg-amber-500 selection:text-black">
+
+  <!-- TOP BAR -->
+  <header class="sticky top-0 z-40 bg-gym-900/95 backdrop-blur border-b border-gym-800 px-4 py-3">
+    <div class="max-w-5xl mx-auto flex items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl gold-gradient flex items-center justify-center text-black font-black text-xl shadow-lg shadow-amber-500/20">
+          PG
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-base sm:text-lg font-black tracking-tight text-white">باور جيم <span class="text-amber-400">POWER GYM</span></h1>
+            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">مفتوح الآن 🟢</span>
+          </div>
+          <p class="text-[11px] text-neutral-400">طرابلس - طريق المطار | تدريب احترافي وتغذية</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button onclick="openModal('bankModal')" class="px-2.5 py-1.5 rounded-lg bg-gym-850 hover:bg-gym-800 border border-gym-700 text-amber-400 text-xs font-bold transition flex items-center gap-1">
+          <span>💳 مصرف شمال أفريقيا</span>
+        </button>
+        <button onclick="openModal('coachModal')" class="px-2.5 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-black text-xs font-black transition flex items-center gap-1">
+          <span>🏋️ كوتش عبدالرحمن</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- NAVIGATION TABS -->
+    <div class="max-w-5xl mx-auto mt-3 flex items-center gap-2 overflow-x-auto pb-1 text-xs">
+      <button onclick="switchTab('exercises')" id="tabBtn-exercises" class="tab-btn px-4 py-2 rounded-xl font-bold bg-amber-500 text-black whitespace-nowrap transition">
+        🏋️ جدول التمارين
+      </button>
+      <button onclick="switchTab('dips')" id="tabBtn-dips" class="tab-btn px-4 py-2 rounded-xl font-bold bg-gym-850 text-neutral-300 hover:text-white border border-gym-700 whitespace-nowrap transition">
+        🎯 تمرين النزول الحر
+      </button>
+      <button onclick="switchTab('plans')" id="tabBtn-plans" class="tab-btn px-4 py-2 rounded-xl font-bold bg-gym-850 text-neutral-300 hover:text-white border border-gym-700 whitespace-nowrap transition">
+        📋 خطط التضخيم والتنشيف
+      </button>
+      <button onclick="switchTab('calculator')" id="tabBtn-calculator" class="tab-btn px-4 py-2 rounded-xl font-bold bg-gym-850 text-neutral-300 hover:text-white border border-gym-700 whitespace-nowrap transition">
+        🔥 حاسبة السعرات
+      </button>
+      <button onclick="switchTab('timer')" id="tabBtn-timer" class="tab-btn px-4 py-2 rounded-xl font-bold bg-gym-850 text-neutral-300 hover:text-white border border-gym-700 whitespace-nowrap transition">
+        ⏱️ مؤقت الراحة
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT -->
+  <main class="flex-1 max-w-5xl w-full mx-auto p-4 space-y-6">
+
+    <!-- 1. EXERCISES TAB -->
+    <section id="tab-exercises" class="tab-content space-y-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-lg font-black text-white">جداول التمارين التخصصية</h2>
+          <p class="text-xs text-neutral-400">اختر العضلة لعرض التمارين مع عدد الجولات والتكرارات والنصائح</p>
+        </div>
+        <span class="text-xs text-amber-400 font-bold badge-gold px-2.5 py-1 rounded-lg">5 مجموعات عضلية</span>
+      </div>
+
+      <!-- Muscle Category Selector -->
+      <div class="flex gap-2 overflow-x-auto pb-1 text-xs">
+        <button onclick="filterMuscle('chest')" class="muscle-btn px-3 py-1.5 rounded-lg bg-amber-500 text-black font-bold whitespace-nowrap">الصدر (Chest)</button>
+        <button onclick="filterMuscle('back')" class="muscle-btn px-3 py-1.5 rounded-lg bg-gym-850 text-neutral-300 hover:text-white border border-gym-700 font-bold whitespace-nowrap">الظهر (Back)</button>
+        <button onclick="filterMuscle('legs')" class="muscle-btn px-3 py-1.5 rounded-lg bg-gym-850 text-neutral-300 hover:text-white border border-gym-700 font-bold whitespace-nowrap">الأرجل (Legs)</button>
+        <button onclick="filterMuscle('shoulders')" class="muscle-btn px-3 py-1.5 rounded-lg bg-gym-850 text-neutral-300 hover:text-white border border-gym-700 font-bold whitespace-nowrap">الأكتاف (Shoulders)</button>
+        <button onclick="filterMuscle('arms')" class="muscle-btn px-3 py-1.5 rounded-lg bg-gym-850 text-neutral-300 hover:text-white border border-gym-700 font-bold whitespace-nowrap">الذراعين (Arms)</button>
+      </div>
+
+      <!-- Exercise Cards Container -->
+      <div id="exerciseList" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+    </section>
+
+    <!-- 2. DIPS (FREE DESCENT) TAB -->
+    <section id="tab-dips" class="tab-content hidden space-y-4">
+      <div class="p-5 rounded-2xl bg-gradient-to-br from-gym-900 via-gym-850 to-amber-950/30 border-2 border-amber-500/50 space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <span class="badge-gold text-xs px-2 py-0.5 rounded-md font-bold">التمرين المختار بعناية</span>
+            <h2 class="text-xl font-black text-white mt-1">تمرين النزول الحر (Parallel Bar Dips)</h2>
+            <p class="text-xs text-neutral-300">أقوى تمرين لبناء الصدر السفلي والترايسبس بقوة وزن الجسم</p>
+          </div>
+          <span class="px-3 py-1 rounded-xl bg-amber-500/20 text-amber-300 border border-amber-500/30 font-bold text-xs">مستوى: متوسط إلى متقدم</span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+          <div class="p-3 rounded-xl bg-gym-900 border border-gym-800">
+            <span class="text-neutral-400">العضلة الأساسية:</span>
+            <p class="font-bold text-amber-400 text-sm mt-0.5">الصدر السفلي والترايسبس</p>
+          </div>
+          <div class="p-3 rounded-xl bg-gym-900 border border-gym-800">
+            <span class="text-neutral-400">الجولات والتكرارات:</span>
+            <p class="font-bold text-white text-sm mt-0.5">3 إلى 4 جولات × 8-12 تكرار</p>
+          </div>
+          <div class="p-3 rounded-xl bg-gym-900 border border-gym-800">
+            <span class="text-neutral-400">الراحة بين الجولات:</span>
+            <p class="font-bold text-white text-sm mt-0.5">60 إلى 90 ثانية</p>
+          </div>
+        </div>
+
+        <div class="p-4 rounded-xl bg-black/40 border border-gym-800 space-y-2 text-xs leading-relaxed">
+          <h3 class="font-bold text-amber-400 flex items-center gap-1">📌 تكنيك الأداء الاحترافي من كوتش عبدالرحمن:</h3>
+          <ul class="list-disc list-inside text-neutral-300 space-y-1">
+            <li><strong>للتركيز على الصدر:</strong> مل بجذعك للأمام بزاوية 30 درجة مع ضم المرفقين للخارج قليلاً.</li>
+            <li><strong>للتركيز على الترايسبس:</strong> حافظ على استقامة الجسم عمودياً وثبّت المرفقين بالقرب من الجانبين.</li>
+            <li>اهبط ببطء وتحكم حتى تصبح زاوية الكوع 90 درجة لتجنب إجهاد أربطة الكتف.</li>
+            <li>ادفع بقوة للأعلى مع إخراج الزفير والضغط على الصدر في القمة دون إقفال مفصل الكوع بالكامل.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. PLANS TAB -->
+    <section id="tab-plans" class="tab-content hidden space-y-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-lg font-black text-white">الخطط التدريبية الاحترافية</h2>
+          <p class="text-xs text-neutral-400">برامج مصممة علمياً لتحقيق أفضل نتيجة سواء للتضخيم أو التنشيف</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Bulking Plan -->
+        <div class="p-4 rounded-2xl bg-gym-900 border border-amber-500/40 space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="font-black text-white text-base">خطة التضخيم وبناء العضل (Bulking 4 Days)</h3>
+            <span class="badge-gold text-xs px-2 py-0.5 rounded font-bold">رجال & نساء</span>
+          </div>
+          <p class="text-xs text-neutral-300">نظام Push / Pull / Legs / Upper مع فائض سعرات مدروس لبناء كتلة عضلية صافية.</p>
+          <div class="space-y-1.5 text-xs text-neutral-200">
+            <div class="p-2 rounded-lg bg-gym-850 flex justify-between"><span>اليوم 1: دفع (صدر + أكتاف + تراي)</span><strong class="text-amber-400">Push</strong></div>
+            <div class="p-2 rounded-lg bg-gym-850 flex justify-between"><span>اليوم 2: سحب (ظهر + باي + ترابيس)</span><strong class="text-amber-400">Pull</strong></div>
+            <div class="p-2 rounded-lg bg-gym-850 flex justify-between"><span>اليوم 3: راحة واستشفاء</span><strong class="text-emerald-400">Rest</strong></div>
+            <div class="p-2 rounded-lg bg-gym-850 flex justify-between"><span>اليوم 4: أرجل وبطات وبطن</span><strong class="text-amber-400">Legs</strong></div>
+            <div class="p-2 rounded-lg bg-gym-850 flex justify-between"><span>اليوم 5: جزء علوي شامل</span><strong class="text-amber-400">Upper</strong></div>
+          </div>
+        </div>
+
+        <!-- Cutting Plan -->
+        <div class="p-4 rounded-2xl bg-gym-900 border border-emerald-500/40 space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="font-black text-white text-base">خطة التنشيف وحرق الدهون (Cutting & Shred)</h3>
+            <span class="px-2 py-0.5 rounded font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs">نحت عضلي</span>
+          </div>
+          <p class="text-xs text-neutral-300">تمارين أوزان مع فترات راحة قصيرة + كارديو HIIT يومي وعجز سعرات 400-500 سعرة.</p>
+          <div class="space-y-1.5 text-xs text-neutral-200">
+            <div class="p-2 rounded-lg bg-gym-850 flex justify-between"><span>اليوم 1: صدر وبطن + 20 دقيقة كارديو</span><strong class="text-emerald-400">Chest+Cardio</strong></div>
+            <div class="p-2 rounded-lg bg-gym-850 flex justify-between"><span>اليوم 2: ظهر وسواعد + HIIT</span><strong class="text-emerald-400">Back+HIIT</strong></div>
+            <div class="p-2 rounded-lg bg-gym-850 flex justify-between"><span>اليوم 3: أرجل وسكوات مكثف</span><strong class="text-emerald-400">Legs Intensity</strong></div>
+            <div class="p-2 rounded-lg bg-gym-850 flex justify-between"><span>اليوم 4: أكتاف وترابيس + كارديو منخفض</span><strong class="text-emerald-400">Shoulders</strong></div>
+            <div class="p-2 rounded-lg bg-gym-850 flex justify-between"><span>اليوم 5: ذراعين سوبر سيت وبطن</span><strong class="text-emerald-400">Arms SuperSet</strong></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. CALCULATOR TAB -->
+    <section id="tab-calculator" class="tab-content hidden space-y-4">
+      <div class="p-4 sm:p-6 rounded-2xl bg-gym-900 border border-gym-800 space-y-4">
+        <div>
+          <h2 class="text-lg font-black text-white">حاسبة السعرات الحرارية والماكروز</h2>
+          <p class="text-xs text-neutral-400">احسب احتياجك اليومي من السعرات والبروتين والكربوهيدرات والدهون بدقة</p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 text-xs">
+          <div>
+            <label class="block text-neutral-300 font-bold mb-1">الجنس</label>
+            <select id="calc-gender" class="w-full bg-gym-850 border border-gym-700 rounded-xl p-2.5 text-white font-bold">
+              <option value="male">ذكر 👨</option>
+              <option value="female">أنثى 👩</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-neutral-300 font-bold mb-1">الوزن (كجم)</label>
+            <input type="number" id="calc-weight" value="75" class="w-full bg-gym-850 border border-gym-700 rounded-xl p-2.5 text-white font-bold" />
+          </div>
+          <div>
+            <label class="block text-neutral-300 font-bold mb-1">الطول (سم)</label>
+            <input type="number" id="calc-height" value="175" class="w-full bg-gym-850 border border-gym-700 rounded-xl p-2.5 text-white font-bold" />
+          </div>
+          <div>
+            <label class="block text-neutral-300 font-bold mb-1">العمر</label>
+            <input type="number" id="calc-age" value="25" class="w-full bg-gym-850 border border-gym-700 rounded-xl p-2.5 text-white font-bold" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+          <div>
+            <label class="block text-neutral-300 font-bold mb-1">مستوى النشاط البدني</label>
+            <select id="calc-activity" class="w-full bg-gym-850 border border-gym-700 rounded-xl p-2.5 text-white font-bold">
+              <option value="1.2">خامل (بدون تمارين)</option>
+              <option value="1.375">نشاط خفيف (1-3 أيام أسبوعياً)</option>
+              <option value="1.55" selected>نشاط متوسط (3-5 أيام أسبوعياً)</option>
+              <option value="1.725">نشاط عالي (6-7 أيام أسبوعياً)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-neutral-300 font-bold mb-1">هدفك الرياضي</label>
+            <select id="calc-goal" class="w-full bg-gym-850 border border-gym-700 rounded-xl p-2.5 text-white font-bold">
+              <option value="bulk">تضخيم وبناء عضل (+400 سعرة)</option>
+              <option value="maintain">المحافظة على الوزن الحالي</option>
+              <option value="cut">تنشيف وخسارة دهون (-500 سعرة)</option>
+            </select>
+          </div>
+        </div>
+
+        <button onclick="calculateCalories()" class="w-full py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-black text-sm transition shadow-lg shadow-amber-500/20">
+          ⚡ احسب السعرات والماكروز الآن
+        </button>
+
+        <div id="calc-result" class="hidden p-4 rounded-xl bg-gym-850 border border-amber-500/40 space-y-3">
+          <div class="flex items-center justify-between border-b border-gym-800 pb-3">
+            <div>
+              <span class="text-xs text-neutral-400">السعرات اليومية المستهدفة:</span>
+              <div id="res-cals" class="text-2xl font-black text-amber-400">2,450 سعرة حرارية</div>
+            </div>
+            <div class="text-left">
+              <span class="text-xs text-neutral-400">معدل الأيض الأساسي (BMR):</span>
+              <div id="res-bmr" class="text-sm font-bold text-neutral-300">1,720 سعرة</div>
+            </div>
+          </div>
+          <div class="grid grid-cols-3 gap-2 text-center text-xs">
+            <div class="p-2.5 rounded-xl bg-gym-900 border border-gym-700">
+              <span class="text-amber-400 font-bold">البروتين</span>
+              <div id="res-protein" class="text-base font-black text-white mt-0.5">165g</div>
+              <span class="text-[10px] text-neutral-400">30% من السعرات</span>
+            </div>
+            <div class="p-2.5 rounded-xl bg-gym-900 border border-gym-700">
+              <span class="text-emerald-400 font-bold">الكربوهيدرات</span>
+              <div id="res-carbs" class="text-base font-black text-white mt-0.5">275g</div>
+              <span class="text-[10px] text-neutral-400">45% من السعرات</span>
+            </div>
+            <div class="p-2.5 rounded-xl bg-gym-900 border border-gym-700">
+              <span class="text-blue-400 font-bold">الدهون الصحية</span>
+              <div id="res-fats" class="text-base font-black text-white mt-0.5">68g</div>
+              <span class="text-[10px] text-neutral-400">25% من السعرات</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. TIMER TAB -->
+    <section id="tab-timer" class="tab-content hidden space-y-4">
+      <div class="max-w-md mx-auto p-6 rounded-2xl bg-gym-900 border border-gym-800 text-center space-y-4">
+        <h2 class="text-lg font-black text-white">مؤقت الراحة بين الجولات ⏱️</h2>
+        <p class="text-xs text-neutral-400">اضبط وقت الراحة للحفاظ على شدة التمرين والضخ العضلي</p>
+
+        <div id="timer-display" class="text-6xl font-black font-mono text-amber-400 tracking-wider py-4">01:00</div>
+
+        <div class="grid grid-cols-4 gap-2 text-xs">
+          <button onclick="setTimerSeconds(30)" class="p-2 rounded-xl bg-gym-850 hover:bg-gym-800 border border-gym-700 font-bold">30ث</button>
+          <button onclick="setTimerSeconds(60)" class="p-2 rounded-xl bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold">60ث</button>
+          <button onclick="setTimerSeconds(90)" class="p-2 rounded-xl bg-gym-850 hover:bg-gym-800 border border-gym-700 font-bold">90ث</button>
+          <button onclick="setTimerSeconds(120)" class="p-2 rounded-xl bg-gym-850 hover:bg-gym-800 border border-gym-700 font-bold">120ث</button>
+        </div>
+
+        <div class="flex gap-2 pt-2">
+          <button id="timer-toggle-btn" onclick="toggleTimer()" class="flex-1 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-black text-sm transition">
+            ▶️ بدء المؤقت
+          </button>
+          <button onclick="resetTimer()" class="px-4 py-3 rounded-xl bg-gym-850 hover:bg-gym-800 border border-gym-700 text-neutral-300 font-bold text-sm transition">
+            🔄 إعادة
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-gym-900 border-t border-gym-800 py-4 px-4 text-center text-xs text-neutral-400 space-y-1">
+    <p>باور جيم (Power Gym) • طرابلس - طريق المطار • بإشراف كوتش عبدالرحمن</p>
+    <p class="text-[11px] text-neutral-500">تطبيق ويب مستقل (Single-File HTML) يعمل بدون خادم وبدون اتصال بالإنترنت</p>
+  </footer>
+
+  <!-- MODAL: NORTH AFRICA BANK -->
+  <div id="bankModal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-gym-900 border-2 border-amber-500/60 rounded-2xl max-w-md w-full p-5 space-y-4">
+      <div class="flex items-center justify-between border-b border-gym-800 pb-3">
+        <h3 class="font-black text-white text-base flex items-center gap-2">
+          <span>💳 بيانات مصرف شمال أفريقيا</span>
+        </h3>
+        <button onclick="closeModal('bankModal')" class="text-neutral-400 hover:text-white text-lg font-bold">✕</button>
+      </div>
+      <div class="p-3.5 rounded-xl bg-gym-850 border border-gym-700 space-y-2 text-xs">
+        <div class="flex justify-between"><span class="text-neutral-400">اسم المصرف:</span><strong class="text-white">مصرف شمال أفريقيا</strong></div>
+        <div class="flex justify-between"><span class="text-neutral-400">اسم المستفيد:</span><strong class="text-white">صالة باور جيم (Power Gym)</strong></div>
+        <div class="flex justify-between items-center pt-2 border-t border-gym-800">
+          <span class="text-neutral-400">رقم الحساب:</span>
+          <span class="font-mono font-bold text-amber-400 text-sm">0123-4567-8901-2345</span>
+        </div>
+      </div>
+      <p class="text-[11px] text-neutral-400">يرجى إرسال إيصال التحويل عبر واتساب لكوتش عبدالرحمن أو إدارة الصالة لتأكيد الاشتراك.</p>
+      <button onclick="closeModal('bankModal')" class="w-full py-2.5 rounded-xl bg-gym-800 hover:bg-gym-750 text-white font-bold text-xs">إغلاق</button>
+    </div>
+  </div>
+
+  <!-- MODAL: COACH ABDULRAHMAN -->
+  <div id="coachModal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-gym-900 border-2 border-amber-500/60 rounded-2xl max-w-md w-full p-5 space-y-4">
+      <div class="flex items-center justify-between border-b border-gym-800 pb-3">
+        <h3 class="font-black text-white text-base flex items-center gap-2">
+          <span>🏋️ كوتش عبدالرحمن</span>
+        </h3>
+        <button onclick="closeModal('coachModal')" class="text-neutral-400 hover:text-white text-lg font-bold">✕</button>
+      </div>
+      <div class="text-xs text-neutral-300 space-y-2 leading-relaxed">
+        <p>المدرب المعتمد لصالة باور جيم، متخصص في تدريب كمال الأجسام، تصميم الخطط الغذائية، وتأهيل القوة البدنية.</p>
+        <div class="p-3 rounded-xl bg-gym-850 border border-gym-700 space-y-1.5">
+          <div class="flex justify-between"><span class="text-neutral-400">أوقات التواجد:</span><strong class="text-amber-400">السبت - الخميس (4:00م - 10:00م)</strong></div>
+          <div class="flex justify-between"><span class="text-neutral-400">الاستشارات:</span><strong class="text-emerald-400">متاحة مجاناً لجميع المشتركين</strong></div>
+        </div>
+      </div>
+      <button onclick="closeModal('coachModal')" class="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs">إغلاق</button>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT LOGIC -->
+  <script>
+    // Exercises Database
+    const exercisesData = {
+      chest: [
+        { name: 'بنش برس بالبار مستوي (Bench Press)', sets: '4 جولات × 8-10 تكرارات', note: 'الأساس لبناء سمك عضلات الصدر، حافظ على ثبات الكتفين.' },
+        { name: 'تمرين النزول الحر (Parallel Bar Dips)', sets: '3 جولات × 10-12 تكرار', note: 'الميل للأمام 30 درجة للتركيز على الصدر السفلي.' },
+        { name: 'تجميع دمبلز مائل للأعلى (Incline DB Press)', sets: '3 جولات × 10-12 تكرار', note: 'استهداف الألياف العلوية للصدر، زاوية 30-45 درجة.' },
+        { name: 'تفتيح كيبل للصدر (Cable Crossover)', sets: '3 جولات × 12-15 تكرار', note: 'عصر العضلة في نهاية الحركة مع ثبات الكوعين.' }
+      ],
+      back: [
+        { name: 'سحب بار واسع للأعلى (Lat Pulldown)', sets: '4 جولات × 10-12 تكرار', note: 'لتوسيع الظهر وبناء شكل الـ V، اسحب بالظهر وليس بالذراعين.' },
+        { name: 'تجديف بالبار منحني (Barbell Bent-Over Row)', sets: '4 جولات × 8-10 تكرارات', note: 'لبناء سمك الظهر الأوسط والسفلي، حافظ على استقامة العمود الفقري.' },
+        { name: 'سحب أرضي ضيق (Seated Cable Row)', sets: '3 جولات × 10-12 تكرار', note: 'ضم لوحي الكتف للخلف وعصر منتصف الظهر.' },
+        { name: 'ديدليفت (Deadlift)', sets: '3 جولات × 6-8 تكرارات', note: 'أقوى تمرين شامل للظهر والأرجل وقوة الجذع.' }
+      ],
+      legs: [
+        { name: 'سكوات خلفي بالبار (Barbell Squat)', sets: '4 جولات × 8-10 تكرارات', note: 'ملك تمارين الأرجل، انزل حتى موازاة الفخذين للأرض.' },
+        { name: 'دفع أرجل بالجهاز (Leg Press)', sets: '3 جولات × 10-12 تكرار', note: 'تفريغ الضغط عن أسفل الظهر والتركيز على الكوادز.' },
+        { name: 'مرجحة أرجل خلفي (Hamstring Curl)', sets: '4 جولات × 12 تكرار', note: 'لعزل العضلة الخلفية للفخذين وتحسين توازن الركبة.' },
+        { name: 'رفع السمانات واقفاً (Calf Raises)', sets: '4 جولات × 15-20 تكرار', note: 'تكرارات عالية مع توقف ثانية في أعلى نقطة.' }
+      ],
+      shoulders: [
+        { name: 'ضغط عسكري بالبار (Overhead Barbell Press)', sets: '4 جولات × 8-10 تكرارات', note: 'بناء أكتاف قوية وضخمة، لا تقوس أسفل الظهر.' },
+        { name: 'رفرفة جانبي بالدمبلز (DB Lateral Raise)', sets: '4 جولات × 12-15 تكرار', note: 'سر عرض الأكتاف، ارفع ببطء وتحكم بدون تأرجح.' },
+        { name: 'فراشة خلفية للأكتاف (Rear Delt Fly)', sets: '3 جولات × 12-15 تكرار', note: 'لإبراز الكتف الخلفي وحماية مفصل الكتف من الإصابات.' }
+      ],
+      arms: [
+        { name: 'تبادل بايسبس بالدمبلز (DB Bicep Curl)', sets: '4 جولات × 10-12 تكرار', note: 'لف المعصم للخارج في قمة الحركة لعصر رأس البايسبس.' },
+        { name: 'ضغط ترايسبس بالحبل (Triceps Rope Pushdown)', sets: '4 جولات × 12-15 تكرار', note: 'افتح الحبل في الأسفل لعصر الرأس الخارجي للترايسبس.' },
+        { name: 'بايسبس بالبار الزجزاج (EZ-Bar Preacher Curl)', sets: '3 جولات × 10-12 تكرار', note: 'عزل تام للبايسبس دون إجهاد المفاصل.' },
+        { name: 'ترايسبس بالدمبل خلف الرأس (Overhead DB Extension)', sets: '3 جولات × 10-12 تكرار', note: 'تمديد الرأس الطويل للترايسبس.' }
+      ]
+    };
+
+    function renderExercises(muscle) {
+      const container = document.getElementById('exerciseList');
+      const list = exercisesData[muscle] || [];
+      container.innerHTML = list.map((item, idx) => `
+        <div class="p-4 rounded-xl bg-gym-900 border border-gym-800 hover:border-amber-500/40 transition space-y-2">
+          <div class="flex items-start justify-between gap-2">
+            <h4 class="font-bold text-white text-sm flex items-center gap-1.5">
+              <span class="w-5 h-5 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center text-xs font-mono font-bold">${idx + 1}</span>
+              <span>${item.name}</span>
+            </h4>
+            <span class="px-2 py-0.5 rounded bg-gym-850 text-amber-300 font-mono text-[11px] font-bold shrink-0">${item.sets}</span>
+          </div>
+          <p class="text-xs text-neutral-400 pr-6 leading-relaxed">${item.note}</p>
+        </div>
+      `).join('');
+    }
+
+    function filterMuscle(muscle) {
+      document.querySelectorAll('.muscle-btn').forEach(btn => {
+        btn.className = 'muscle-btn px-3 py-1.5 rounded-lg bg-gym-850 text-neutral-300 hover:text-white border border-gym-700 font-bold whitespace-nowrap';
+      });
+      event.target.className = 'muscle-btn px-3 py-1.5 rounded-lg bg-amber-500 text-black font-bold whitespace-nowrap';
+      renderExercises(muscle);
+    }
+
+    // Tabs switching
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.className = 'tab-btn px-4 py-2 rounded-xl font-bold bg-gym-850 text-neutral-300 hover:text-white border border-gym-700 whitespace-nowrap transition';
+      });
+      const activeContent = document.getElementById('tab-' + tabId);
+      const activeBtn = document.getElementById('tabBtn-' + tabId);
+      if (activeContent) activeContent.classList.remove('hidden');
+      if (activeBtn) activeBtn.className = 'tab-btn px-4 py-2 rounded-xl font-bold bg-amber-500 text-black whitespace-nowrap transition';
+    }
+
+    // Modals
+    function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+    function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+    // Calorie Calculator
+    function calculateCalories() {
+      const gender = document.getElementById('calc-gender').value;
+      const weight = parseFloat(document.getElementById('calc-weight').value) || 75;
+      const height = parseFloat(document.getElementById('calc-height').value) || 175;
+      const age = parseFloat(document.getElementById('calc-age').value) || 25;
+      const activity = parseFloat(document.getElementById('calc-activity').value) || 1.55;
+      const goal = document.getElementById('calc-goal').value;
+
+      // Mifflin-St Jeor Formula
+      let bmr = (10 * weight) + (6.25 * height) - (5 * age);
+      bmr += (gender === 'male' ? 5 : -161);
+
+      let tdee = bmr * activity;
+      let targetCals = tdee;
+      if (goal === 'bulk') targetCals += 400;
+      if (goal === 'cut') targetCals -= 500;
+
+      const proteinGrams = Math.round(weight * 2.2);
+      const fatsGrams = Math.round((targetCals * 0.25) / 9);
+      const carbsGrams = Math.round((targetCals - (proteinGrams * 4) - (fatsGrams * 9)) / 4);
+
+      document.getElementById('res-cals').innerText = Math.round(targetCals) + ' سعرة حرارية';
+      document.getElementById('res-bmr').innerText = Math.round(bmr) + ' سعرة';
+      document.getElementById('res-protein').innerText = proteinGrams + 'g';
+      document.getElementById('res-carbs').innerText = Math.max(0, carbsGrams) + 'g';
+      document.getElementById('res-fats').innerText = fatsGrams + 'g';
+      document.getElementById('calc-result').classList.remove('hidden');
+    }
+
+    // Rest Timer
+    let timerTotal = 60;
+    let timerLeft = 60;
+    let timerInterval = null;
+
+    function formatTime(s) {
+      const m = Math.floor(s / 60);
+      const sec = s % 60;
+      return `${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+    }
+
+    function setTimerSeconds(s) {
+      clearInterval(timerInterval);
+      timerInterval = null;
+      document.getElementById('timer-toggle-btn').innerText = '▶️ بدء المؤقت';
+      timerTotal = s;
+      timerLeft = s;
+      document.getElementById('timer-display').innerText = formatTime(timerLeft);
+    }
+
+    function toggleTimer() {
+      const btn = document.getElementById('timer-toggle-btn');
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+        btn.innerText = '▶️ استئناف';
+      } else {
+        if (timerLeft <= 0) timerLeft = timerTotal;
+        btn.innerText = '⏸️ إيقاف مؤقت';
+        timerInterval = setInterval(() => {
+          timerLeft--;
+          document.getElementById('timer-display').innerText = formatTime(timerLeft);
+          if (timerLeft <= 0) {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            btn.innerText = '✅ انتهت الراحة!';
+            if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+          }
+        }, 1000);
+      }
+    }
+
+    function resetTimer() {
+      clearInterval(timerInterval);
+      timerInterval = null;
+      timerLeft = timerTotal;
+      document.getElementById('timer-toggle-btn').innerText = '▶️ بدء المؤقت';
+      document.getElementById('timer-display').innerText = formatTime(timerLeft);
+    }
+
+    // Initial render
+    renderExercises('chest');
+  </script>
+</body>
+</html>

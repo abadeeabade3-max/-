@@ -59,20 +59,7 @@ export const InstallAppModal: React.FC<InstallAppModalProps> = ({
   const [qrDataUrl, setQrDataUrl] = useState<string>('');
 
   // Permanent public production URL (shared link without AI Studio login)
-  const defaultAisSharedUrl = 'https://ais-pre-3m2lygdv4xnzz5bz7rmwwr-39187155379.europe-west2.run.app';
-  const [appLiveUrl, setAppLiveUrl] = useState<string>(() => {
-    try {
-      const saved = localStorage.getItem('powergym_share_url');
-      if (saved && saved.trim().startsWith('http')) return saved.trim();
-    } catch {}
-    if (typeof window !== 'undefined') {
-      const origin = window.location.origin;
-      if (origin && !origin.includes('ais-dev-') && !origin.includes('localhost') && origin.startsWith('http')) {
-        return window.location.href;
-      }
-    }
-    return defaultAisSharedUrl;
-  });
+  const appLiveUrl = 'https://ais-pre-3m2lygdv4xnzz5bz7rmwwr-39187155379.europe-west2.run.app';
 
   useEffect(() => {
     if (defaultTab) {
@@ -249,8 +236,8 @@ export const InstallAppModal: React.FC<InstallAppModalProps> = ({
                 : 'text-neutral-400 hover:text-white'
             }`}
           >
-            <Code2 className="w-3.5 h-3.5 shrink-0" />
-            <span>AppsGeyser 🚀</span>
+            <FileCode className="w-3.5 h-3.5 shrink-0" />
+            <span>ملف HTML مفرد كامل 📄</span>
           </button>
         </div>
 
@@ -308,23 +295,18 @@ export const InstallAppModal: React.FC<InstallAppModalProps> = ({
             </div>
 
             {/* Notice about sharing without AI Studio login */}
-            <div className="p-3 rounded-xl bg-neutral-950 border border-neutral-800 space-y-2 text-xs">
-              <div className="flex items-center justify-between gap-2">
-                <div className="space-y-0.5">
-                  <span className="font-bold text-white block">رابط المشاركة المباشر للأصدقاء:</span>
-                  <span className="text-[11px] text-neutral-400 truncate block">لا يتطلب تسجيل دخول Google AI Studio ويفتح التطبيق فوراً</span>
-                </div>
-                <button
-                  onClick={copyLiveUrl}
-                  className="px-3 py-1.5 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-neutral-200 hover:text-white font-bold text-xs shrink-0 flex items-center gap-1 transition cursor-pointer"
-                >
-                  {copiedUrl ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                  <span>{copiedUrl ? 'تم النسخ!' : 'نسخ الرابط'}</span>
-                </button>
+            <div className="p-3 rounded-xl bg-neutral-950 border border-neutral-800 flex items-center justify-between gap-2 text-xs">
+              <div className="space-y-0.5">
+                <span className="font-bold text-white block">رابط المشاركة المباشر للأصدقاء:</span>
+                <span className="text-[11px] text-neutral-400 truncate block">لا يتطلب تسجيل دخول Google AI Studio ويفتح التطبيق فوراً</span>
               </div>
-              <div className="text-[11px] text-amber-300/90 bg-amber-950/30 p-2 rounded-lg border border-amber-500/20">
-                ⚡ <strong>إذا ظهر لأصدقائك «عنوان URL غير موجود (404)»:</strong> اضغط على زر <strong>Share (مشاركة)</strong> في أعلى شاشة Google AI Studio لتفعيل الرابط للعامة أول مرة.
-              </div>
+              <button
+                onClick={copyLiveUrl}
+                className="px-3 py-1.5 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-neutral-200 hover:text-white font-bold text-xs shrink-0 flex items-center gap-1 transition cursor-pointer"
+              >
+                {copiedUrl ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                <span>{copiedUrl ? 'تم النسخ!' : 'نسخ الرابط'}</span>
+              </button>
             </div>
 
             {/* Device Specific Installation Steps */}
@@ -612,54 +594,118 @@ export const InstallAppModal: React.FC<InstallAppModalProps> = ({
           <AndroidSecurityGuide />
         )}
 
-        {/* TAB 5: APPSGEYSER DEDICATED (SOLVES USER QUERY PRECISELY) */}
+        {/* TAB 5: SINGLE-FILE HTML CODE & DOWNLOAD (DIRECTLY MATCHES USER REQUEST) */}
         {modalTab === 'appsgeyser' && (
           <div className="space-y-4 animate-fadeIn">
-            <div className="p-3.5 rounded-2xl bg-amber-950/30 border border-amber-500/40 text-xs text-neutral-200 space-y-1.5">
-              <div className="flex items-center gap-2 text-amber-400 font-bold">
-                <Sparkles className="w-4 h-4" />
-                <span>كود التطبيق الكامل مدمج في ملف واحد جاهز لـ AppsGeyser 🎯</span>
+            {/* Main Single File Banner */}
+            <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-950/60 via-neutral-900 to-emerald-950/40 border-2 border-amber-500/80 shadow-xl shadow-amber-500/10 space-y-3">
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-11 h-11 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 shrink-0">
+                    <FileCode className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <h4 className="text-sm sm:text-base font-black text-white flex items-center gap-1.5">
+                      <span>كود تطبيق باور جيم كاملاً في ملف واحد HTML 📄⚡</span>
+                      <span className="text-[10px] bg-amber-500/20 text-amber-300 border border-amber-500/30 px-2 py-0.5 rounded-full font-bold">1.4 MB (مدمج 100%)</span>
+                    </h4>
+                    <p className="text-[11px] text-neutral-300 mt-0.5 leading-relaxed">
+                      تم دمج كامل كود التطبيق في ملف HTML وحيد ومستقل: التنسيقات الكاملة (CSS)، المحرك التفاعلي (React JS)، كافة جداول التمارين، الخطط التدريبية للرجال والنساء، حاسبة السعرات، وتمرين النزول الحر مع الشعار والأيقونات.
+                    </p>
+                  </div>
+                </div>
               </div>
-              <p className="text-[11px] text-neutral-300 leading-relaxed">
-                تم دمج جميع ملفات التطبيق (HTML + التنسيقات CSS + برمجة التفاعل + الجداول والصور) في <strong className="text-white">ملف واحد مستقل تماماً</strong> بدون أي تبعيات خارجية معالجة لتعمل على نظام WebView في AppsGeyser.
-              </p>
+
+              {/* Main Action Buttons */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1">
+                {/* Button 1: Download Single File HTML */}
+                <a
+                  href="/powergym.html"
+                  download="powergym.html"
+                  className="py-3 px-3 rounded-xl bg-gradient-to-r from-amber-500 via-amber-400 to-amber-500 hover:from-amber-400 hover:to-amber-300 text-neutral-950 font-black text-xs flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20 transition cursor-pointer text-center"
+                >
+                  <Download className="w-4 h-4 text-neutral-950" />
+                  <span>تحميل ملف HTML (powergym.html)</span>
+                </a>
+
+                {/* Button 2: Copy full code */}
+                <button
+                  onClick={handleCopyFullCode}
+                  disabled={copyingCode}
+                  className="py-3 px-3 rounded-xl bg-neutral-800 hover:bg-neutral-750 border border-neutral-700 hover:border-amber-500/50 text-white font-bold text-xs flex items-center justify-center gap-2 transition cursor-pointer"
+                >
+                  {copiedCodeSuccess ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4 text-amber-400" />}
+                  <span>{copiedCodeSuccess ? 'تم نسخ الكود كاملاً! 🎉' : copyingCode ? 'جارٍ نسخ الكود...' : 'نسخ الكود كاملاً للحافظة 📋'}</span>
+                </button>
+
+                {/* Button 3: Open in New Tab for Live Preview */}
+                <a
+                  href="/powergym.html"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="py-3 px-3 rounded-xl bg-emerald-950/60 hover:bg-emerald-900/60 border border-emerald-500/40 text-emerald-300 font-bold text-xs flex items-center justify-center gap-1.5 transition cursor-pointer"
+                >
+                  <ExternalLink className="w-4 h-4 text-emerald-400" />
+                  <span>فتح الملف في نافذة مستقلة 🌐</span>
+                </a>
+              </div>
+
+              {/* Key Features of the Single File HTML */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-[11px] text-neutral-300 pt-2 border-t border-neutral-800/80">
+                <div className="flex items-center gap-1.5">
+                  <Check className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                  <span>يعمل بنقرة مزدوجة في أي متصفح</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <Check className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                  <span>لا يحتاج لخادم أو Node.js</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <Check className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                  <span>كافة الميزات والجداول مدمجة</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <Check className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                  <span>تنسيقات CSS مضمنة &lt;style&gt;</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <Check className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                  <span>الشعار والأيقونات بصيغة Base64</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <Check className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                  <span>جاهز للتحويل لتطبيق APK بـ AppsGeyser</span>
+                </div>
+              </div>
             </div>
 
-            {/* Quick Actions for AppsGeyser */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-              {/* Button 1: Copy full code */}
-              <button
-                onClick={handleCopyFullCode}
-                disabled={copyingCode}
-                className="py-3 px-3 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-neutral-950 font-black text-xs flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20 transition cursor-pointer"
-              >
-                {copiedCodeSuccess ? <Check className="w-4 h-4 text-neutral-950" /> : <Copy className="w-4 h-4" />}
-                <span>{copiedCodeSuccess ? 'تم نسخ الكود كاملاً في الحافظة! 🎉' : copyingCode ? 'جارٍ نسخ الكود...' : 'نسخ كود التطبيق كاملاً (لصق في AppsGeyser)'}</span>
-              </button>
+            {/* How to Use the Single File */}
+            <div className="p-4 rounded-2xl bg-neutral-950 border border-neutral-800 space-y-3">
+              <h4 className="text-xs font-bold text-white flex items-center gap-1.5">
+                <Sparkles className="w-4 h-4 text-amber-400" />
+                <span>طرق استخدام ملف الـ HTML المفرد:</span>
+              </h4>
 
-              {/* Button 2: Download Single File HTML */}
-              <a
-                href="/powergym_single_file.html"
-                download="index.html"
-                className="py-3 px-3 rounded-2xl bg-neutral-800 hover:bg-neutral-750 border border-neutral-700 hover:border-amber-500/50 text-white font-bold text-xs flex items-center justify-center gap-2 transition cursor-pointer text-center"
-              >
-                <FileCode className="w-4 h-4 text-amber-400" />
-                <span>تحميل ملف HTML مفرد (index.html)</span>
-              </a>
-            </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-[11px] text-neutral-300">
+                <div className="p-3 rounded-xl bg-neutral-900/80 border border-neutral-800 space-y-1">
+                  <div className="font-bold text-white flex items-center gap-1">
+                    <span>1. الاستخدام المباشر على الهاتف أو الحاسوب:</span>
+                  </div>
+                  <p className="text-neutral-400 leading-relaxed">
+                    حمّل الملف <code className="text-amber-300">powergym.html</code> وقم بنقله لهاتفك أو حاسوبك، ثم افتحه في متصفح (Google Chrome أو Safari أو Edge). سيعمل التطبيق كأنه تطبيق هاتف حقيقي مع حفظ البيانات محلياً.
+                  </p>
+                </div>
 
-            {/* Button 3: Download ZIP archive for AppsGeyser */}
-            <a
-              href="/appsgeyser_powergym.zip"
-              download="appsgeyser_powergym.zip"
-              className="w-full py-2.5 px-3 rounded-xl bg-neutral-950 border border-neutral-800 hover:border-emerald-500/40 text-neutral-200 hover:text-white text-xs font-bold flex items-center justify-between transition cursor-pointer"
-            >
-              <div className="flex items-center gap-2">
-                <FileArchive className="w-4 h-4 text-emerald-400" />
-                <span>تحميل حزمة ZIP جاهزة للرفع على AppsGeyser (شاملة index.html والأيقونة)</span>
+                <div className="p-3 rounded-xl bg-neutral-900/80 border border-neutral-800 space-y-1">
+                  <div className="font-bold text-white flex items-center gap-1">
+                    <span>2. تحويله إلى تطبيق APK عبر AppsGeyser:</span>
+                  </div>
+                  <p className="text-neutral-400 leading-relaxed">
+                    اضغط زر «نسخ الكود كاملاً»، ثم افتح موقع <a href="https://appsgeyser.com" target="_blank" rel="noreferrer" className="text-amber-400 underline">AppsGeyser</a> واختر قالب (HTML Code)، والصق الكود واضغط توليد APK للحصول على تطبيق أندرويد في دقائق.
+                  </p>
+                </div>
               </div>
-              <Download className="w-4 h-4 text-emerald-400 shrink-0" />
-            </a>
+            </div>
 
             {/* Step-by-Step Guide for AppsGeyser */}
             <div className="p-4 rounded-2xl bg-neutral-950 border border-neutral-800 space-y-3">

@@ -56,15 +56,13 @@ if (jsFile) {
     return `"${PROD_HOST}/assets/${folder}/${filename}"`;
   });
 
-  // Remove existing script tag and inject inline standard script
-  // IMPORTANT: We use () => to prevent JavaScript replace() from interpreting '$&', '$`', etc. in jsContent
+  // Remove existing script tag from head or wherever it was in Vite output
   const scriptRegex = new RegExp(`<script[^>]*src="[^"]*${jsFile}"[^>]*></script>`, 'i');
-  if (scriptRegex.test(html)) {
-    html = html.replace(scriptRegex, () => `<script>\n${jsContent}\n</script>`);
-  } else {
-    html = html.replace('</body>', () => `<script>\n${jsContent}\n</script>\n</body>`);
-  }
-  console.log(`Inlined JS safely: ${jsFile} (${Math.round(jsContent.length / 1024)} KB)`);
+  html = html.replace(scriptRegex, '');
+
+  // Place the inline JavaScript right before </body> so that <div id="root"> is guaranteed to exist in the DOM
+  html = html.replace('</body>', () => `<script>\n${jsContent}\n</script>\n</body>`);
+  console.log(`Inlined JS safely before </body>: ${jsFile} (${Math.round(jsContent.length / 1024)} KB)`);
 }
 
 // 5. Convert icon and logo assets to data URI or inline
@@ -93,19 +91,28 @@ if (fs.existsSync(pwa192Path)) {
   html = html.replace(/href=["']\/pwa-192x192\.png["']/g, `href="${base64Pwa}"`);
 }
 
-// Output destinations for single-file HTML
+// Output destinations for single-file HTML (both powergym_single_file.html and powergym.html)
 const outDist = path.join(distDir, 'powergym_single_file.html');
 const outPublic = path.resolve(process.cwd(), 'public/powergym_single_file.html');
 const outRoot = path.resolve(process.cwd(), 'powergym_single_file.html');
+
+const outDistShort = path.join(distDir, 'powergym.html');
+const outPublicShort = path.resolve(process.cwd(), 'public/powergym.html');
+const outRootShort = path.resolve(process.cwd(), 'powergym.html');
 
 fs.writeFileSync(outDist, html, 'utf-8');
 fs.writeFileSync(outPublic, html, 'utf-8');
 fs.writeFileSync(outRoot, html, 'utf-8');
 
+fs.writeFileSync(outDistShort, html, 'utf-8');
+fs.writeFileSync(outPublicShort, html, 'utf-8');
+fs.writeFileSync(outRootShort, html, 'utf-8');
+
 console.log(`Successfully generated single-file app:`);
 console.log(`- ${outDist} (${Math.round(html.length / 1024)} KB)`);
 console.log(`- ${outPublic}`);
 console.log(`- ${outRoot}`);
+console.log(`- ${outPublicShort}`);
 
 // 6. Generate AppsGeyser Ready ZIP Archive with index.html at root
 const appsGeyserZipPathDist = path.join(distDir, 'appsgeyser_powergym.zip');

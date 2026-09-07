@@ -64,7 +64,8 @@ async function buildFullSourcePackage() {
     '.gitignore',
     'capacitor.config.json',
     'BUILD_APK.md',
-    'powergym_single_file.html'
+    'powergym_single_file.html',
+    'powergym.html'
   ];
 
   for (const fileName of rootFilesToInclude) {
