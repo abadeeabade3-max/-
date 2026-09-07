@@ -1,0 +1,9 @@
+{
+  "appId": "com.powergym.app",
+  "appName": "باور جيم - Power Gym",
+  "webDir": "dist",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "https"
+  }
+}

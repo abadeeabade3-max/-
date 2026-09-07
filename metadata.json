@@ -1,0 +1,8 @@
+{
+  "name": "Remix Remix باور جيم - Power Gym",
+  "description": "التطبيق الرسمي لصالة باور جيم: جداول تمارين احترافية بصور توضيحية لجميع التمارين والبدائل، تمرين النزول الحر مع صور تشريحية للعضلة المستهدفة، محرك بحث شامل، دعم الدفع والتحويل عبر مصرف شمال أفريقيا (056011402159017).",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

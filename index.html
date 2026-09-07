@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
+    <title>باور جيم - Power Gym</title>
+    <meta name="description" content="التطبيق الرسمي لصالة باور جيم: جداول تمارين احترافية بصور توضيحية لجميع التمارين والبدائل، تمرين النزول الحر مع صور تشريحية للعضلة المستهدفة، محرك بحث شامل، دعم الدفع والتحويل عبر مصرف شمال أفريقيا (056011402159017)." />
+    <meta property="og:title" content="باور جيم - Power Gym" />
+    <meta property="og:description" content="التطبيق الرسمي لصالة باور جيم: جداول تمارين احترافية بصور توضيحية لجميع التمارين والبدائل، تمرين النزول الحر مع صور تشريحية للعضلة المستهدفة، محرك بحث شامل، دعم الدفع والتحويل عبر مصرف شمال أفريقيا (056011402159017)." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="theme-color" content="#10b981" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="باور جيم" />
+    <meta name="format-detection" content="telephone=no" />
+    <link rel="icon" type="image/png" href="/powergym-logo.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/pwa-192x192.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Changa:wght@600;700;800&display=swap" rel="stylesheet">
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js').catch(() => {});
+        });
+      }
+    </script>
+  </head>
+  <body class="bg-neutral-950 text-neutral-100 font-sans antialiased selection:bg-amber-500 selection:text-black">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+

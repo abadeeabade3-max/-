@@ -1,0 +1,41 @@
+{
+  "name": "باور جيم - Power Gym",
+  "short_name": "Power Gym",
+  "description": "التطبيق الرسمي لصالة باور جيم: جداول تمارين مصورة، مواعيد الفترات الحية، حاسبة السعرات، وإدارة الاشتراكات.",
+  "start_url": "/",
+  "id": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0a",
+  "theme_color": "#10b981",
+  "lang": "ar",
+  "dir": "rtl",
+  "orientation": "portrait",
+  "scope": "/",
+  "categories": ["fitness", "sports", "health"],
+  "icons": [
+    {
+      "src": "/pwa-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/pwa-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/pwa-maskable-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
