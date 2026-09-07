@@ -59,7 +59,20 @@ export const InstallAppModal: React.FC<InstallAppModalProps> = ({
   const [qrDataUrl, setQrDataUrl] = useState<string>('');
 
   // Permanent public production URL (shared link without AI Studio login)
-  const appLiveUrl = 'https://ais-pre-3m2lygdv4xnzz5bz7rmwwr-39187155379.europe-west2.run.app';
+  const defaultAisSharedUrl = 'https://ais-pre-3m2lygdv4xnzz5bz7rmwwr-39187155379.europe-west2.run.app';
+  const [appLiveUrl, setAppLiveUrl] = useState<string>(() => {
+    try {
+      const saved = localStorage.getItem('powergym_share_url');
+      if (saved && saved.trim().startsWith('http')) return saved.trim();
+    } catch {}
+    if (typeof window !== 'undefined') {
+      const origin = window.location.origin;
+      if (origin && !origin.includes('ais-dev-') && !origin.includes('localhost') && origin.startsWith('http')) {
+        return window.location.href;
+      }
+    }
+    return defaultAisSharedUrl;
+  });
 
   useEffect(() => {
     if (defaultTab) {
@@ -201,7 +214,7 @@ export const InstallAppModal: React.FC<InstallAppModalProps> = ({
             }`}
           >
             <FolderArchive className="w-3.5 h-3.5 shrink-0 text-purple-300" />
-            <span>حزمة GitHub و ZIP 🐙</span>
+            <span>كود التطبيق كامل ZIP 📦</span>
           </button>
 
           <button
@@ -295,18 +308,23 @@ export const InstallAppModal: React.FC<InstallAppModalProps> = ({
             </div>
 
             {/* Notice about sharing without AI Studio login */}
-            <div className="p-3 rounded-xl bg-neutral-950 border border-neutral-800 flex items-center justify-between gap-2 text-xs">
-              <div className="space-y-0.5">
-                <span className="font-bold text-white block">رابط المشاركة المباشر للأصدقاء:</span>
-                <span className="text-[11px] text-neutral-400 truncate block">لا يتطلب تسجيل دخول Google AI Studio ويفتح التطبيق فوراً</span>
+            <div className="p-3 rounded-xl bg-neutral-950 border border-neutral-800 space-y-2 text-xs">
+              <div className="flex items-center justify-between gap-2">
+                <div className="space-y-0.5">
+                  <span className="font-bold text-white block">رابط المشاركة المباشر للأصدقاء:</span>
+                  <span className="text-[11px] text-neutral-400 truncate block">لا يتطلب تسجيل دخول Google AI Studio ويفتح التطبيق فوراً</span>
+                </div>
+                <button
+                  onClick={copyLiveUrl}
+                  className="px-3 py-1.5 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-neutral-200 hover:text-white font-bold text-xs shrink-0 flex items-center gap-1 transition cursor-pointer"
+                >
+                  {copiedUrl ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                  <span>{copiedUrl ? 'تم النسخ!' : 'نسخ الرابط'}</span>
+                </button>
               </div>
-              <button
-                onClick={copyLiveUrl}
-                className="px-3 py-1.5 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-neutral-200 hover:text-white font-bold text-xs shrink-0 flex items-center gap-1 transition cursor-pointer"
-              >
-                {copiedUrl ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                <span>{copiedUrl ? 'تم النسخ!' : 'نسخ الرابط'}</span>
-              </button>
+              <div className="text-[11px] text-amber-300/90 bg-amber-950/30 p-2 rounded-lg border border-amber-500/20">
+                ⚡ <strong>إذا ظهر لأصدقائك «عنوان URL غير موجود (404)»:</strong> اضغط على زر <strong>Share (مشاركة)</strong> في أعلى شاشة Google AI Studio لتفعيل الرابط للعامة أول مرة.
+              </div>
             </div>
 
             {/* Device Specific Installation Steps */}
@@ -389,11 +407,11 @@ export const InstallAppModal: React.FC<InstallAppModalProps> = ({
           </div>
         )}
 
-        {/* TAB 2: GITHUB SUPPORT & COMPREHENSIVE ZIP PACKAGE (MATCHES USER REQUEST) */}
+        {/* TAB 2: FULL SOURCE CODE ZIP & GITHUB SUPPORT (DIRECTLY MATCHES USER REQUEST) */}
         {modalTab === 'github' && (
           <div className="space-y-3.5 animate-fadeIn">
-            {/* Primary GitHub Package Card */}
-            <div className="p-4 rounded-2xl bg-gradient-to-r from-purple-950/60 via-neutral-900 to-indigo-950/40 border-2 border-purple-500/60 shadow-xl shadow-purple-500/5 space-y-3">
+            {/* Primary Full Source Code ZIP Card */}
+            <div className="p-4 rounded-2xl bg-gradient-to-r from-purple-950/70 via-neutral-900 to-emerald-950/40 border-2 border-purple-500 shadow-xl shadow-purple-500/10 space-y-3">
               <div className="flex items-start justify-between gap-3">
                 <div className="flex items-center gap-3">
                   <div className="w-11 h-11 rounded-xl bg-purple-500/20 border border-purple-500/40 flex items-center justify-center text-purple-300 shrink-0">
@@ -401,52 +419,89 @@ export const InstallAppModal: React.FC<InstallAppModalProps> = ({
                   </div>
                   <div>
                     <h4 className="text-sm sm:text-base font-black text-white flex items-center gap-1.5">
-                      <span>حزمة مشروع GitHub وتطبيق الـ ZIP الشاملة 🐙📦</span>
-                      <span className="text-[10px] bg-purple-500/20 text-purple-300 border border-purple-500/30 px-2 py-0.5 rounded-full font-bold">1.5 MB</span>
+                      <span>ملف ZIP كامل لكود تطبيق باور جيم كاملاً 100% 📦💻</span>
+                      <span className="text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded-full font-bold">29 MB (كود كامل)</span>
                     </h4>
                     <p className="text-[11px] text-neutral-300 mt-0.5 leading-relaxed">
-                      حزمة كود ومستودع GitHub متكامل، مجهز للاستضافة التلقائية المجانية على <strong>GitHub Pages</strong> وبناء APK تلقائياً عبر <strong>GitHub Actions</strong>، ويعمل ممتازاً على <strong>جميع إصدارات الهواتف</strong>.
+                      يحتوي على كافة ملفات المصدر التطويرية: مجلد <code className="text-purple-300">src/</code> بالكامل (React + TypeScript + Tailwind)، مجلد <code className="text-purple-300">public/</code> بجميع صور التمارين المتحركة GIF، ملفات الإعدادات <code className="text-purple-300">package.json</code>، سكربتات البناء، وملفات دعم Android و GitHub.
                     </p>
                   </div>
                 </div>
               </div>
 
-              {/* Main Download Button */}
+              {/* Main Full Code ZIP Download Button */}
               <a
-                href="/powergym_github_package.zip"
-                download="powergym_github_package.zip"
-                className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-purple-500 via-indigo-500 to-purple-600 hover:from-purple-400 hover:to-indigo-400 text-white font-black text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-purple-500/25 transition cursor-pointer"
+                href="/powergym_full_source_code.zip"
+                download="powergym_full_source_code.zip"
+                className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-500 hover:from-purple-500 hover:to-indigo-500 text-white font-black text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-purple-600/30 transition cursor-pointer"
               >
-                <Download className="w-5 h-5" />
-                <span>تحميل حزمة powergym_github_package.zip (1.5 MB) 📥</span>
+                <Download className="w-5 h-5 text-amber-300" />
+                <span>تحميل ملف ZIP الكامل لكود التطبيق (powergym_full_source_code.zip) 📥</span>
               </a>
 
+              {/* Quick Secondary Download Links */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+                <a
+                  href="/powergym_github_package.zip"
+                  download="powergym_github_package.zip"
+                  className="py-2.5 px-3 rounded-lg bg-neutral-950/80 hover:bg-neutral-800 border border-neutral-700 text-neutral-200 text-xs font-bold flex items-center justify-center gap-1.5 transition"
+                >
+                  <FolderArchive className="w-4 h-4 text-purple-400" />
+                  <span>حزمة مستودع GitHub المباشرة (ZIP)</span>
+                </a>
+
+                <a
+                  href="/powergym_single_file.html"
+                  download="powergym_single_file.html"
+                  className="py-2.5 px-3 rounded-lg bg-neutral-950/80 hover:bg-neutral-800 border border-neutral-700 text-neutral-200 text-xs font-bold flex items-center justify-center gap-1.5 transition"
+                >
+                  <Code2 className="w-4 h-4 text-emerald-400" />
+                  <span>ملف التطبيق المستقل (HTML أوفلاين)</span>
+                </a>
+              </div>
+
               {/* Feature Checklist */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-[11px] text-neutral-300 pt-1">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-[11px] text-neutral-300 pt-1 border-t border-neutral-800/80">
                 <div className="flex items-center gap-1.5">
-                  <Check className="w-3.5 h-3.5 text-purple-400 shrink-0" />
-                  <span>دعم مستودع GitHub جاهز</span>
+                  <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                  <span>كود React & TSX كامل ومفتوح</span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <Check className="w-3.5 h-3.5 text-purple-400 shrink-0" />
-                  <span>نشر تلقائي عبر Pages</span>
+                  <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                  <span>كافة صور التمارين المتحركة GIF</span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <Check className="w-3.5 h-3.5 text-purple-400 shrink-0" />
-                  <span>بناء APK بـ Actions</span>
+                  <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                  <span>حزم package.json & Vite جاهزة</span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <Check className="w-3.5 h-3.5 text-purple-400 shrink-0" />
-                  <span>دعم أندرويد 5.0 إلى 15</span>
+                  <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                  <span>جاهز للتشغيل المحلي npm run dev</span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <Check className="w-3.5 h-3.5 text-purple-400 shrink-0" />
-                  <span>أوفلاين 100% بدون إنترنت</span>
+                  <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                  <span>نشر تلقائي عبر GitHub Pages</span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <Check className="w-3.5 h-3.5 text-purple-400 shrink-0" />
-                  <span>شعار وأيقونات كاملة</span>
+                  <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                  <span>إعدادات تحويل APK متكاملة</span>
                 </div>
+              </div>
+            </div>
+
+            {/* How to Run Locally with Node.js */}
+            <div className="p-3.5 rounded-2xl bg-neutral-950 border border-neutral-800 space-y-2 text-xs text-neutral-300">
+              <div className="font-bold text-white flex items-center gap-1.5">
+                <Code2 className="w-4 h-4 text-emerald-400" />
+                <span>طريقة تشغيل الكود وتطويره على حاسوبك (Node.js):</span>
+              </div>
+              <div className="space-y-1.5 text-[11px]">
+                <p className="text-neutral-400">1. فك ضغط ملف <code className="text-purple-300">powergym_full_source_code.zip</code>.</p>
+                <p className="text-neutral-400">2. افتح الطرفية (Terminal / CMD) داخل مجلد المشروع ونفّذ:</p>
+                <pre className="p-2.5 rounded-xl bg-black/80 text-emerald-400 font-mono text-[11px] overflow-x-auto" dir="ltr">
+                  npm install{"\n"}npm run dev
+                </pre>
+                <p className="text-neutral-400">3. افتح في المتصفح الرابط: <code className="text-white font-mono">http://localhost:3000</code></p>
               </div>
             </div>
 
